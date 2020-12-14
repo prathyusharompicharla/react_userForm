@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-
-import Employee from './Employee/Employee';
-import Person from './Person/Person';
-
+import axios from 'axios';
+import AddTitle from './addTitle';
 
 class App1 extends Component {
   constructor(props) {
@@ -31,8 +29,6 @@ class App1 extends Component {
     updatePersons.splice(index, 1);
     this.setState({ persons: updatePersons })
   }
-
-
 
   render() {
     let persons = null;
@@ -71,7 +67,7 @@ class App extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.deleteEmpHandler=this.deleteEmpHandler.bind(this);
+    this.deleteEmpHandler = this.deleteEmpHandler.bind(this);
     this.state = {
       firstName: '',
       lastName: '',
@@ -93,7 +89,7 @@ class App extends Component {
       empData: prevState.empData.concat({ data: data })
     }));
   }
-  
+
   deleteEmpHandler = (index) => {
     let updateEmp = [...this.state.empData];
     console.log(updateEmp)
@@ -105,20 +101,44 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          FirstName:
-                    <input value={this.state.firstName} onChange={(e) => { this.setState({ firstName: e.target.value }) }} />
-          <br />
-                    LastName:
-                    <input value={this.state.lastName} onChange={(e) => { this.setState({ lastName: e.target.value }) }} />
-          <br />
-                    PhoneNumber:
-                    <input value={this.state.phoneNumber} onChange={(e) => { this.setState({ phoneNumber: e.target.value }) }} />
-          <br />
-          <button type='submit'>Submit!</button>
-        </form>
+      <div className="App">
+        <h1> Employee form</h1>
 
+      </div>
+    );
+  }
+}
+
+
+
+
+class App3 extends React.Component {
+  state = {
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    inputValue: []
+  };
+  changeHandler = event => {
+    this.setState({
+      input: event.target.value
+    })
+  };
+
+  submit = () => {
+    let data = { firstName: this.state.firstName, lastName: this.state.lastName, phoneNumber: this.state.phoneNumber }
+    this.setState(prevState => ({
+      inputValue: prevState.inputValue.concat({ data: data })
+    }));
+    // this.setState({ inputValue: this.inputValue });
+  };
+
+  render() {
+    return (
+      <div>
+
+        <Employee submit={this.submit} />
+        {/* <div>{this.state.inputValue}</div> */}
 
         <table>
           <thead>
@@ -130,7 +150,8 @@ class App extends Component {
           </thead>
           <tbody>
 
-            {this.state.empData.map((unit) => {
+            {this.state.inputValue.map((unit) => {
+              console.log(unit)
               return (
                 <tr >
                   <td >{unit.data.firstName} </td>
@@ -144,9 +165,48 @@ class App extends Component {
         </table>
       </div>
     );
+  }}
+
+ 
+  
+class Route extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title:"",
+      posts:[] 
+    }
+   
+  }
+componentDidMount(){
+  axios.get('http://jsonplaceholder.typicode.com/posts')
+  .then(response=>{
+    this.setState({posts:response.data})
+  }).catch(err=>{
+    this.setState({posts:err})
+  })
+}
+
+  render() {
+   
+    return (
+      <div className="App">
+          <h1 style={{textAlign:'center'}}>React Tutorial</h1>
+          <AddTitle  />
+          {this.state.posts.map(post=>{
+            return <p>{post.title}</p>
+          })}
+      </div>
+    );
   }
 }
 
+export  {Route};
 
+
+
+
+
+export default App3;
 export { App1 };
-export default App;
+export { App };
